@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>IoT Dashboard</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body { background:#0f0f0f; color:white; text-align:center; font-family:Arial; }
+    .btn { padding:15px 30px; margin:10px; font-size:18px; border:none; border-radius:10px; cursor:pointer; }
+    .on { background:#00c853; color:white; }
+    .off { background:#d50000; color:white; }
+    .card { margin-top:50px; padding:30px; background:#1c1c1c; border-radius:20px; display:inline-block; }
+  </style>
+</head>
+
+<body>
+  <h1>IoT Relay Dashboard</h1>
+  <div class="card">
+    <h2>Status Relay: <span id="status" style="color:yellow;">...</span></h2>
+    <button class="btn on" onclick="setRelay('ON')">NYALAKAN</button>
+    <button class="btn off" onclick="setRelay('OFF')">MATIKAN</button>
+  </div>
+
+<script>
+const SERVER = "https://rigidly-nonproblematical-annalisa.ngrok-free.dev/iot_server";
+
+async function loadStatus() {
+    let res = await fetch(`${SERVER}/get_status.php`);
+    let text = await res.text();
+    document.getElementById("status").innerText = text.trim();
+}
+
+async function setRelay(val) {
+    let form = new FormData();
+    form.append("relay", val);
+    await fetch(`${SERVER}/set_status.php`, { method:"POST", body:form });
+    loadStatus();
+}
+
+setInterval(loadStatus, 2000);
+loadStatus();
+</script>
+
+</body>
+</html>
