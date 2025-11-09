@@ -23,49 +23,53 @@
 <script>
 const SERVER = "https://rigidly-nonproblematical-annalisa.ngrok-free.dev/iot_server";
 
-const FETCH_OPTIONS = {
-    method: "GET",
-    headers: {
-        "ngrok-skip-browser-warning": "69420",
-        "User-Agent": "Mozilla/5.0",
-        "Cache-Control": "no-cache"
-    }
-};
-
 async function loadStatus() {
     try {
-        let res = await fetch(`${SERVER}/get_status.php`, FETCH_OPTIONS);
-        let text = await res.text();
-        document.getElementById("status").innerText = text.trim();
-    } catch (e) {
-        console.log("Error:", e);
-    }
-}
-
-async function setRelay(val) {
-    try {
-        let form = new FormData();
-        form.append("relay", val);
-
-        await fetch(`${SERVER}/set_status.php`, {
-            method: "POST",
-            body: form,
+        let res = await fetch(`${SERVER}/get_status.php`, {
+            method: "GET",
+            mode: "cors",
+            credentials: "omit",
             headers: {
-                "ngrok-skip-browser-warning": "69420",
-                "User-Agent": "Mozilla/5.0",
+                "ngrok-skip-browser-warning": "1",
+                "Accept": "text/plain",
                 "Cache-Control": "no-cache"
             }
         });
 
+        let text = await res.text();
+        document.getElementById("status").innerText = text.trim();
+    } catch (err) {
+        console.log("Error GET:", err);
+    }
+}
+
+async function setRelay(value) {
+    try {
+        let form = new FormData();
+        form.append("relay", value);
+
+        await fetch(`${SERVER}/set_status.php`, {
+            method: "POST",
+            mode: "cors",
+            credentials: "omit",
+            headers: {
+                "ngrok-skip-browser-warning": "1",
+                "Accept": "text/plain",
+                "Cache-Control": "no-cache"
+            },
+            body: form
+        });
+
         loadStatus();
-    } catch (e) {
-        console.log("Error:", e);
+    } catch (err) {
+        console.log("Error POST:", err);
     }
 }
 
 setInterval(loadStatus, 2000);
 loadStatus();
 </script>
+
 
 
 </body>
