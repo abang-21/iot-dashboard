@@ -24,53 +24,21 @@
 const SERVER = "https://rigidly-nonproblematical-annalisa.ngrok-free.dev/iot_server";
 
 async function loadStatus() {
-    try {
-        let res = await fetch(`${SERVER}/get_status.php`, {
-            method: "GET",
-            mode: "cors",
-            credentials: "omit",
-            headers: {
-                "ngrok-skip-browser-warning": "1",
-                "Accept": "text/plain",
-                "Cache-Control": "no-cache"
-            }
-        });
-
-        let text = await res.text();
-        document.getElementById("status").innerText = text.trim();
-    } catch (err) {
-        console.log("Error GET:", err);
-    }
+    let res = await fetch(`${SERVER}/get_status.php`);
+    let text = await res.text();
+    document.getElementById("status").innerText = text.trim();
 }
 
-async function setRelay(value) {
-    try {
-        let form = new FormData();
-        form.append("relay", value);
-
-        await fetch(`${SERVER}/set_status.php`, {
-            method: "POST",
-            mode: "cors",
-            credentials: "omit",
-            headers: {
-                "ngrok-skip-browser-warning": "1",
-                "Accept": "text/plain",
-                "Cache-Control": "no-cache"
-            },
-            body: form
-        });
-
-        loadStatus();
-    } catch (err) {
-        console.log("Error POST:", err);
-    }
+async function setRelay(val) {
+    let form = new FormData();
+    form.append("relay", val);
+    await fetch(`${SERVER}/set_status.php`, { method:"POST", body:form });
+    loadStatus();
 }
 
 setInterval(loadStatus, 2000);
 loadStatus();
 </script>
-
-
 
 </body>
 </html>
