@@ -23,29 +23,50 @@
 <script>
 const SERVER = "https://rigidly-nonproblematical-annalisa.ngrok-free.dev/iot_server";
 
+const FETCH_OPTIONS = {
+    method: "GET",
+    headers: {
+        "ngrok-skip-browser-warning": "69420",
+        "User-Agent": "Mozilla/5.0",
+        "Cache-Control": "no-cache"
+    }
+};
+
 async function loadStatus() {
-    let res = await fetch(`${SERVER}/get_status.php`, {
-        headers: { "ngrok-skip-browser-warning": "true" }
-    });
-    let text = await res.text();
-    document.getElementById("status").innerText = text.trim();
+    try {
+        let res = await fetch(`${SERVER}/get_status.php`, FETCH_OPTIONS);
+        let text = await res.text();
+        document.getElementById("status").innerText = text.trim();
+    } catch (e) {
+        console.log("Error:", e);
+    }
 }
 
 async function setRelay(val) {
-    let form = new FormData();
-    form.append("relay", val);
-    await fetch(`${SERVER}/set_status.php`, {
-        method:"POST",
-        body: form,
-        headers: { "ngrok-skip-browser-warning": "true" }
-    });
-    loadStatus();
-}
+    try {
+        let form = new FormData();
+        form.append("relay", val);
 
+        await fetch(`${SERVER}/set_status.php`, {
+            method: "POST",
+            body: form,
+            headers: {
+                "ngrok-skip-browser-warning": "69420",
+                "User-Agent": "Mozilla/5.0",
+                "Cache-Control": "no-cache"
+            }
+        });
+
+        loadStatus();
+    } catch (e) {
+        console.log("Error:", e);
+    }
+}
 
 setInterval(loadStatus, 2000);
 loadStatus();
 </script>
+
 
 </body>
 </html>
